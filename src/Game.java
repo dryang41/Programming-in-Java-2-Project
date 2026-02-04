@@ -1,6 +1,4 @@
-import java.io.IOException;
-
-public class Main {
+public class Game {
     public static void main(String[] args) {
         // initial exception handling structure
         try {
@@ -10,8 +8,6 @@ public class Main {
             System.err.println("Index out of range of array.");
         }catch (StringIndexOutOfBoundsException ex) {
             System.err.println("Index out of range of string.");
-        //} catch (IOException ex) {
-           // System.err.println("Input or output has failed.");
         }catch (Exception ex) {
             System.out.println("An error has occurred.");
             System.err.println(ex.toString());
