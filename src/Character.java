@@ -99,9 +99,156 @@ public class Character {
     }
 
     /**
+     * Checks the amount of thirst the player currently has and adds the amount.
+     * If it reaches the max value or higher, set thirst to max value. Finally, display the appropriate message.
+     * @param amount Value used to add to thirst meter.
+     */
+    public void addThirst(int amount) {
+        if (thirst + amount > 10){
+            thirst = maximumValue;
+            System.out.println("Your thirst is completely quenched. You feel great.");
+        }
+        else if (thirst + amount > 7) {
+            thirst += amount;
+            System.out.println("Your thirst is minor enough to ignore. You feel fine.");
+        }
+        else if (thirst + amount > 4) {
+            thirst += amount;
+            System.out.println("Your thirst is still present. You feel faint.");
+        }
+        else {
+            thirst += amount;
+            System.out.println("Your thirst is still heavily bothering you. You feel weak.");
+        }
+    }
+
+    /**
+     * Checks the amount of thirst the player currently has and subtracts the amount.
+     * If it reaches zero or below, reduce some health. Finally, display the appropriate message.
+     * @param amount Value used to subtract from thirst meter.
+     */
+    public void removeThirst(int amount) {
+        if (thirst - amount <= 0) {
+            System.out.println("Your thirst takes a heavy toll on you. You lost some health.");
+            thirst = 0;
+            removeHealth(2);
+        }
+        else if (thirst - amount < 4) {
+            System.out.println("Your thirst is significant. You feel weak.");
+            thirst -= amount;
+        }
+        else if (thirst - amount < 7) {
+            System.out.println("Your thirst took a hit. You feel faint.");
+            thirst -= amount;
+        }
+        else {
+            System.out.println("Your thirst increases slightly. You feel fine.");
+            thirst -= amount;
+        }
+    }
+
+    /**
+     * Checks the amount of hunger the player currently has and adds the amount.
+     * If it reaches the max value or higher, set hunger to max value. Finally, display the appropriate message.
+     * @param amount Value used to add to hunger meter.
+     */
+    public void addHunger(int amount) {
+        if (hunger + amount > 10){
+            hunger = maximumValue;
+            System.out.println("Your hunger is gone for now. You feel great.");
+        }
+        else if (hunger + amount > 7) {
+            hunger += amount;
+            System.out.println("Your hunger is minor enough to ignore. You feel fine.");
+        }
+        else if (hunger + amount > 4) {
+            hunger += amount;
+            System.out.println("Your hunger is still present. You feel faint.");
+        }
+        else {
+            hunger += amount;
+            System.out.println("Your hunger is still heavily bothering you. You feel weak.");
+        }
+    }
+
+    /**
+     * Checks the amount of hunger the player currently has and subtracts the amount.
+     * If it reaches zero or below, reduce some health. Finally, display the appropriate message.
+     * @param amount Value used to subtract from hunger meter.
+     */
+    public void removeHunger(int amount) {
+        if (hunger - amount <= 0) {
+            System.out.println("Your hunger takes a heavy toll on you. You lost some health.");
+            hunger = 0;
+            removeHealth(2);
+        }
+        else if (hunger - amount < 4) {
+            System.out.println("Your hunger is significant. You feel weak.");
+            hunger -= amount;
+        }
+        else if (hunger - amount < 7) {
+            System.out.println("Your hunger took a hit. You feel faint.");
+            hunger -= amount;
+        }
+        else {
+            System.out.println("Your hunger increases slightly. You feel fine.");
+            hunger -= amount;
+        }
+    }
+
+    /**
+     * Checks the amount of warmth the player currently has and adds the amount.
+     * If it reaches the max value or higher, set warmth to max value. Finally, display the appropriate message.
+     * @param amount Value used to add to warmth meter.
+     */
+    public void addWarmth(int amount) {
+        if (warmth + amount > 10){
+            warmth = maximumValue;
+            System.out.println("Your warmth is gone for now. You feel great.");
+        }
+        else if (warmth + amount > 7) {
+            warmth += amount;
+            System.out.println("Your warmth is minor enough to ignore. You feel fine.");
+        }
+        else if (warmth + amount > 4) {
+            warmth += amount;
+            System.out.println("Your warmth is still present. You feel faint.");
+        }
+        else {
+            warmth += amount;
+            System.out.println("Your warmth is still heavily bothering you. You feel weak.");
+        }
+    }
+
+    /**
+     * Checks the amount of warmth the player currently has and subtracts the amount.
+     * If it reaches zero or below, reduce some health. Finally, display the appropriate message.
+     * @param amount Value used to subtract from warmth meter.
+     */
+    public void removeWarmth(int amount) {
+        if (warmth - amount <= 0) {
+            System.out.println("Your lack of warmth takes a heavy toll on you. You lost some health.");
+            warmth = 0;
+            removeHealth(2);
+        }
+        else if (warmth - amount < 4) {
+            System.out.println("Your lack of warmth is significant. You feel weak.");
+            warmth -= amount;
+        }
+        else if (warmth - amount < 7) {
+            System.out.println("Your lack of warmth took a hit. You feel faint.");
+            warmth -= amount;
+        }
+        else {
+            System.out.println("Your lack of warmth increases slightly. You feel fine.");
+            warmth -= amount;
+        }
+    }
+
+    /**
      * Prints each variable for the player to see what how they're doing.
      */
-    public void PrintStatus() {
+    public void printStatus() {
         System.out.println("Health: " + getHealth() + ".");
         System.out.println("Thirst: " + getThirst() + ".");
         System.out.println("Hunger: " + getHunger() + ".");
