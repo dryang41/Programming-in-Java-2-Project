@@ -4,8 +4,10 @@ import org.apache.logging.log4j.Logger;
 * Game class to run the game itself.
 */
 public class Game {
-    // logger object
+    // Logger object
     final static Logger log = LogManager.getLogger("test");
+    // Character object
+    Character character = Character.getInstance();
 
     /**
      * Prints out the initial starting messages. It sets the atmosphere and gives context to the player.

@@ -2,7 +2,7 @@
  * Character class is used to track variables of player character.
  * Singleton pattern used to create a single instance of Character object in memory for all classes to use.
  */
-public class Character {
+public class Character implements InventorySpace{
     // Max value for all player variables
     private final int maximumValue = 10;
 
@@ -15,11 +15,18 @@ public class Character {
     private int thirst = maximumValue;
     private int hunger = maximumValue;
     private int warmth = maximumValue;
+    // This variable tracks the amount of inventory space the character starts with.
+    private int startingIventory = 2;
 
     private static final Character instance = new Character();
 
     public static Character getInstance(){
         return instance;
+    }
+
+    @Override
+    public int checkInventory() {
+        return startingIventory;
     }
 
     /**
@@ -56,7 +63,7 @@ public class Character {
      * @param amount Value used to add to health meter.
      */
     public void addHealth(int amount) {
-        if (health + amount > 10){
+        if (health + amount > maximumValue){
             health = maximumValue;
             System.out.println("Your wounds are completely healed. You feel great.");
         }
@@ -104,7 +111,7 @@ public class Character {
      * @param amount Value used to add to thirst meter.
      */
     public void addThirst(int amount) {
-        if (thirst + amount > 10){
+        if (thirst + amount > maximumValue){
             thirst = maximumValue;
             System.out.println("Your thirst is completely quenched. You feel great.");
         }
@@ -153,7 +160,7 @@ public class Character {
      * @param amount Value used to add to hunger meter.
      */
     public void addHunger(int amount) {
-        if (hunger + amount > 10){
+        if (hunger + amount > maximumValue){
             hunger = maximumValue;
             System.out.println("Your hunger is gone for now. You feel great.");
         }
@@ -202,7 +209,7 @@ public class Character {
      * @param amount Value used to add to warmth meter.
      */
     public void addWarmth(int amount) {
-        if (warmth + amount > 10){
+        if (warmth + amount > maximumValue){
             warmth = maximumValue;
             System.out.println("Your warmth is gone for now. You feel great.");
         }
