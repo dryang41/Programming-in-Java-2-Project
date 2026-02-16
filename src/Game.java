@@ -12,7 +12,7 @@ public class Game {
     /**
      * Prints out the initial starting messages. It sets the atmosphere and gives context to the player.
      */
-    public static void startMessage(){
+    private static void startMessage(){
         System.out.println("You wake up in an unfamiliar location, the bed feels rough, this isn't your room.");
         System.out.println("The air feels different, the way the bed creaks is different, everything is different. Are you even on Earth?");
         System.out.println("There is no light in the room, except a lantern, it glows softly.");

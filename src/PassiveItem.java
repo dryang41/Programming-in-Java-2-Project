@@ -9,8 +9,9 @@ public class PassiveItem extends Item{
      * If there is no valid effect, display the error message.
      * Switch-case statement to look for valid effects to modify, if found, update the variable.
      */
+    @Override
     public void UseItem() {
-        // Informs the user that item has been equiped.
+        // Informs the user that item has been equipped.
         System.out.println("You equipped the " + getName() + ".");
 
         switch(getEffect()){
