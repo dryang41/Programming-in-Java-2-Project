@@ -4,6 +4,10 @@ import org.apache.logging.log4j.Logger;
 * Game class to run the game itself.
 */
 public class Game {
+    //
+    private final static int endPoint = 30;
+    private static int timeTracker = 0;
+
     // Logger object
     final static Logger log = LogManager.getLogger("test");
     // Character object

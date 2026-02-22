@@ -8,7 +8,7 @@ public abstract class Item {
     private String description;
     private Rarity rarity;
     private String effect;
-    private int amountModified;
+    private int effectiveness;
 
     // Item interacts with the character class. Protected to allow subclasses to interact with character.
     protected Character character = Character.getInstance();
@@ -25,9 +25,9 @@ public abstract class Item {
         If Rare, effect is modified by 2.
         If Ultrarare, effect is modified by 3.
          */
-        if (rarity == Rarity.Common){ amountModified = 1; }
-        else if (rarity == Rarity.Rare){ amountModified = 2;}
-        else { amountModified = 3; }
+        if (rarity == Rarity.Common){ effectiveness = 1; }
+        else if (rarity == Rarity.Rare){ effectiveness = 2;}
+        else { effectiveness = 3; }
     }
 
     /**
@@ -57,9 +57,9 @@ public abstract class Item {
     public String getEffect() { return effect; }
 
     /**
-     * @return amountModified of item.
+     * @return Effectiveness of item.
      */
-    public int getAmountModified() { return amountModified; }
+    public int getEffectiveness() { return effectiveness; }
 
     /**
      * A method designed for subclasses to override and properly use.
