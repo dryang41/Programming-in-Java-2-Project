@@ -9,14 +9,22 @@ public class Event {
     private Item itemsGiven;
     private ArrayList<Location> locationsPossible;
 
+    // Grabbing character instance to modify if needed.
     private Character character = Character.getInstance();
 
-    public Event(String description, String effectOnCharacter, int effectiveness, boolean repeatable, Item itemsGiven, ArrayList<Location> locationsPossible) {
+    /**
+     * Constructor for events that apply an effect on the character.
+     * @param description Description of event.
+     * @param effectOnCharacter The effect that is modified.
+     * @param effectiveness How much the effectOnCharacter is changed by.
+     * @param repeatable If the event can happen more than once.
+     * @param locationsPossible Locations where the event can fire.
+     */
+    public Event(String description, String effectOnCharacter, int effectiveness, boolean repeatable, ArrayList<Location> locationsPossible) {
         this.description = description;
         this.repeatable = repeatable;
         this.effectOnCharacter = effectOnCharacter;
         this.effectiveness = effectiveness;
-        this.itemsGiven = itemsGiven;
         this.locationsPossible = locationsPossible;
     }
 
