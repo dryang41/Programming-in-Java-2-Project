@@ -17,25 +17,10 @@ public class ConsumableItem extends Item{
         // Informs the user that item has been used.
         System.out.println("You used the " + getName() + ".");
 
-        switch(getEffect()){
-            case("health"):
-                character.addHealth(getAmountModified());
-                break;
-            case("hunger"):
-                character.addHunger(getAmountModified());
-                break;
-            case("thirst"):
-                character.addThirst(getAmountModified());
-                break;
-            case("warmth"):
-                character.addWarmth(getAmountModified());
-                break;
-            default:
-                System.err.println("Invalid item effect.");
-                break;
-        }
+        applyEffect();
 
         // Decrement the amount of uses of item remaining.
         amountOfUses--;
+        // amountOfUses;
     }
 }

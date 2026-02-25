@@ -5,32 +5,14 @@ public class PassiveItem extends Item{
     }
 
     /**
-     * Equips the item and uses the addEffect methods written in character.
-     * If there is no valid effect, display the error message.
-     * Switch-case statement to look for valid effects to modify, if found, update the variable.
+     * Uses the abstract method in Item.java as a basis to override.
      */
     @Override
     public void UseItem() {
         // Informs the user that item has been equipped.
         System.out.println("You equipped the " + getName() + ".");
 
-        switch(getEffect()){
-            case("health"):
-                character.addHealth(getAmountModified());
-                break;
-            case("hunger"):
-                character.addHunger(getAmountModified());
-                break;
-            case("thirst"):
-                character.addThirst(getAmountModified());
-                break;
-            case("warmth"):
-                character.addWarmth(getAmountModified());
-                break;
-            default:
-                System.err.println("Invalid item effect.");
-                break;
-        }
+        applyEffect();
     }
 
     /**
@@ -44,16 +26,16 @@ public class PassiveItem extends Item{
 
         switch(getEffect()){
             case("health"):
-                character.removeHealth(getAmountModified());
+                character.removeHealth(getEffectiveness());
                 break;
             case("hunger"):
-                character.removeHunger(getAmountModified());
+                character.removeHunger(getEffectiveness());
                 break;
             case("thirst"):
-                character.removeThirst(getAmountModified());
+                character.removeThirst(getEffectiveness());
                 break;
             case("warmth"):
-                character.removeWarmth(getAmountModified());
+                character.removeWarmth(getEffectiveness());
                 break;
             default:
                 System.err.println("Invalid item effect.");

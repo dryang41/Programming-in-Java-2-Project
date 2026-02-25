@@ -14,7 +14,7 @@ public abstract class Item {
     protected Character character = Character.getInstance();
 
     // Constructor
-    public Item(String name, String description, Rarity rarity, String effect){
+    public Item(String name, String description, Rarity rarity, String effect) {
         this.name = name;
         this.description = description;
         this.rarity = rarity;
@@ -25,22 +25,26 @@ public abstract class Item {
         If Rare, effect is modified by 2.
         If Ultrarare, effect is modified by 3.
          */
-        if (rarity == Rarity.Common){ effectiveness = 1; }
-        else if (rarity == Rarity.Rare){ effectiveness = 2;}
-        else { effectiveness = 3; }
+        if (rarity == Rarity.Common) {
+            effectiveness = 1;
+        } else if (rarity == Rarity.Rare) {
+            effectiveness = 2;
+        } else {
+            effectiveness = 3;
+        }
     }
 
     /**
      * @return name of item.
      */
-    public String getName(){
+    public String getName() {
         return name;
     }
 
     /**
      * @return description of item.
      */
-    public String getDescription(){
+    public String getDescription() {
         return description;
     }
 
@@ -54,16 +58,45 @@ public abstract class Item {
     /**
      * @return effect of item.
      */
-    public String getEffect() { return effect; }
+    public String getEffect() {
+        return effect;
+    }
 
     /**
      * @return Effectiveness of item.
      */
-    public int getEffectiveness() { return effectiveness; }
+    public int getEffectiveness() {
+        return effectiveness;
+    }
 
     /**
      * A method designed for subclasses to override and properly use.
      * It's used for the player to use/equip an item.
      */
     public abstract void UseItem();
+
+    /**
+     * Switch case statement to find the proper stat to add.
+     * When it finds one, it uses the character's built-in addEffect method.
+     * If none is found, display error message.
+     */
+    public void applyEffect() {
+        switch (getEffect()) {
+            case ("health"):
+                character.addHealth(getEffectiveness());
+                break;
+            case ("hunger"):
+                character.addHunger(getEffectiveness());
+                break;
+            case ("thirst"):
+                character.addThirst(getEffectiveness());
+                break;
+            case ("warmth"):
+                character.addWarmth(getEffectiveness());
+                break;
+            default:
+                System.err.println("Invalid item effect.");
+                break;
+        }
+    }
 }
