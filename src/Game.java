@@ -1,5 +1,8 @@
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 /*
 * Game class to run the game itself.
 */
@@ -35,13 +38,61 @@ public class Game {
         System.out.println("As your eyes adjust to the sudden change in light, you look outside.");
         System.out.println("It's eerily quiet, no animals, no human activity, nothing. Are you completely alone?");
         System.out.println("You look around to see if there is anything to use.");
-        System.out.println("There is a slight breeze coming from the east, you see nothing but a vast sea.");
+        System.out.println("The first thing that catches your eyes is the massive mountain range to the north.");
+        System.out.println("You don't even need to take a step further to realize that any unprepared exploration will lead to disaster.");
+        System.out.println("There is a slight breeze coming from the west, you see nothing but a vast sea.");
         System.out.println("The sea seems infinite in size, the beautiful blue fills the horizon.");
-        System.out.println("To the north is a ");
-        System.out.println("Down south is a ");
-        System.out.println("The mix of diffferent terrains and climates should be impossible.");
+        System.out.println("Down south is a dense, almost maze-like jungle.");
+        System.out.println("You should not venture in too deep, else you might not ever make it out.");
+        System.out.println("Finally, you look eastbound, it's a desert-like area that seems impassable.");
+        System.out.println("Slightly beyond that, a vast deep canyon, \"What could lay at the bottom?\", you wonder.");
+        System.out.println("The mix of different terrains and climates should be impossible.");
         System.out.println("You come to the conclusion that you are not on Earth. You need to go back home.");
         System.out.println("But how? For now you have to survive. You should search around for anything.");
+    }
+
+    /**
+     * Checks the time of local computer and uses the hour to display a message.
+     * Message depends on the time of day.
+     * If time can't be read or invalid value is read, display a filler message.
+     */
+    public static void checkWatch() {
+        LocalTime time = LocalTime.now();
+        int hour = time.getHour();
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("h:m");
+        String wrongTime = "Is this right? Your watch seems to read the time of somewhere else. Maybe it's still reading the time back home.";
+
+        switch(hour) {
+            // Early morning
+            case 0, 1, 2, 3, 4, 5:
+                System.out.println("Your watch reads " + time.format(format) + " AM, it is bright early in the morning. You should sleep in.");
+                System.out.println(wrongTime);
+                break;
+            // Morning
+            case 6, 7, 8, 9, 10, 11:
+                System.out.println("Your watch reads " + time.format(format) + " AM, it is early in the morning. It is time to get up, you can't stay here forever.");
+                System.out.println(wrongTime);
+                break;
+            // Noon
+            case 12:
+                System.out.println("Your watch reads " + time.format(format) + " PM, it is noon. It's the perfect time to explore.");
+                System.out.println(wrongTime);
+                break;
+            // Afternoon
+            case 13, 14, 15, 16, 17, 18, 19, 20:
+                System.out.println("Your watch reads " + time.format(format) + " PM, it is the afternoon. You still have time to explore.");
+                System.out.println(wrongTime);
+                break;
+            // Evening
+            case 21, 22, 23:
+                System.out.println("Your watch reads " + time.format(format) + " PM, it is dead in the evening. You definitely should head back to the cabin.");
+                System.out.println(wrongTime);
+                break;
+            // Unknown time
+            default:
+                System.out.println("You can't check the time, your watch seems to be broken.");
+                break;
+        }
     }
 
     public static void main(String[] args) {

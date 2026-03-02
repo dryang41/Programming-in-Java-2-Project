@@ -2,7 +2,7 @@
  * Character class is used to track variables of player character.
  * Singleton pattern used to create a single instance of Character object in memory for all classes to use.
  */
-public class Character implements InventorySpace{
+public class Character{
     // Max value for all player variables
     private final int maximumValue = 10;
 
@@ -15,18 +15,11 @@ public class Character implements InventorySpace{
     private int thirst = maximumValue;
     private int hunger = maximumValue;
     private int warmth = maximumValue;
-    // This variable tracks the amount of inventory space the character starts with.
-    private int startingIventory = 2;
 
     private static final Character instance = new Character();
 
     public static Character getInstance(){
         return instance;
-    }
-
-    @Override
-    public int checkInventory() {
-        return startingIventory;
     }
 
     /**

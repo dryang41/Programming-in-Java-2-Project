@@ -63,7 +63,7 @@ public final class DatabaseManager {
         try (Statement statement = c.createStatement()) {
             // Items tables with an id that auto-increments, name, description, rarity, effect, and amountOfUses.
             statement.executeUpdate("CREATE TABLE items("
-                    + " id INTEGER PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
+                    + " itemid INTEGER PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
                     + " name VARCHAR(50) NOT NULL,"
                     + " description VARCHAR(255) NOT NULL,"
                     + " rarity INTEGER NOT NULL,"

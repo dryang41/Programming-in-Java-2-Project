@@ -69,6 +69,12 @@ public abstract class Item {
         return effectiveness;
     }
 
+    @Override
+    /**
+     * Overridden toString method.
+     */
+    public String toString() { return getName() + " - " + getDescription() + " Rarity: " + getRarity(); }
+
     /**
      * A method designed for subclasses to override and properly use.
      * It's used for the player to use/equip an item.

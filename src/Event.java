@@ -6,7 +6,7 @@ public class Event {
     private int effectiveness;
     private boolean repeatable;
     private Item itemGiven;
-    private ArrayList<Location> locationsPossible;
+    private Location locationPossible;
 
     // Grabbing character instance to modify if needed.
     private Character character = Character.getInstance();
@@ -17,14 +17,14 @@ public class Event {
      * @param effectOnCharacter The effect that is modified.
      * @param effectiveness How much the effectOnCharacter is changed by.
      * @param repeatable If the event can happen more than once.
-     * @param locationsPossible Locations where the event can fire.
+     * @param locationPossible Locations where the event can fire.
      */
-    public Event(String description, String effectOnCharacter, int effectiveness, boolean repeatable, ArrayList<Location> locationsPossible) {
+    public Event(String description, String effectOnCharacter, int effectiveness, boolean repeatable, Location locationPossible) {
         this.description = description;
         this.repeatable = repeatable;
         this.effectOnCharacter = effectOnCharacter;
         this.effectiveness = effectiveness;
-        this.locationsPossible = locationsPossible;
+        this.locationPossible = locationPossible;
     }
 
     /**
@@ -32,25 +32,25 @@ public class Event {
      * @param description Description of event.
      * @param repeatable If the event can happen more than once.
      * @param itemGiven The item the player will receive.
-     * @param locationsPossible Locations where the event can fire.
+     * @param locationPossible Locations where the event can fire.
      */
-    public Event(String description, boolean repeatable, Item itemGiven, ArrayList<Location> locationsPossible) {
+    public Event(String description, boolean repeatable, Item itemGiven, Location locationPossible) {
         this.description = description;
         this.repeatable = repeatable;
         this.itemGiven = itemGiven;
-        this.locationsPossible = locationsPossible;
+        this.locationPossible = locationPossible;
     }
 
     /**
      * Constructor for events that don't give items to the player.
      * @param description Description of event.
      * @param repeatable If the event can happen more than once.
-     * @param locationsPossible Locations where the event can fire.
+     * @param locationPossible Locations where the event can fire.
      */
-    public Event(String description, boolean repeatable, ArrayList<Location> locationsPossible) {
+    public Event(String description, boolean repeatable, Location locationPossible) {
         this.description = description;
         this.repeatable = repeatable;
-        this.locationsPossible = locationsPossible;
+        this.locationPossible = locationPossible;
     }
 
     /**
@@ -79,9 +79,9 @@ public class Event {
     public Item getItemGiven() { return itemGiven; }
 
     /**
-     * @return ArrayList of locations this event can fire.
+     * @return The location where this event can fire.
      */
-    public ArrayList<Location> getLocationsPossible() { return locationsPossible; }
+    public Location getLocationPossible() { return locationPossible; }
 
     /**
      * Fires the event and applies any effects to the character if there are any.
@@ -108,7 +108,7 @@ public class Event {
                     break;
             }
         }
-        else if ((getEffectOnCharacter() == null || getEffectOnCharacter().isEmpty()) && getEffectiveness() < 0) {
+        else if (!(getEffectOnCharacter() == null || getEffectOnCharacter().isEmpty()) && getEffectiveness() < 0) {
             switch (getEffectOnCharacter()) {
                 case ("health"):
                     character.removeHealth(Math.abs(getEffectiveness()));
