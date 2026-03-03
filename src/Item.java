@@ -2,7 +2,7 @@
  * Abstract item class for items. This just lays the groundwork for how items should behave and interact with the player.
  * It is abstract to not have any direct instantiation of Item class.
  */
-public abstract class Item {
+public abstract class Item implements Comparable<Item>{
     // Basic variables.
     private String name;
     private String description;
@@ -69,11 +69,20 @@ public abstract class Item {
         return effectiveness;
     }
 
-    @Override
     /**
      * Overridden toString method.
      */
+    @Override
     public String toString() { return getName() + " - " + getDescription() + " Rarity: " + getRarity(); }
+
+    /**
+     * Sorts list of items by name alphabetically, i.e. starts by A, ends with Z.
+     * @param i the object to be compared.
+     */
+    @Override
+    public int compareTo(Item i) {
+        return this.getName().compareTo(i.getName());
+    }
 
     /**
      * A method designed for subclasses to override and properly use.

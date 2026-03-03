@@ -1,11 +1,14 @@
+import org.apache.derby.iapi.store.access.conglomerate.Sort;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * The class where items are stored and the player can grab them.
  * Singleton class so there is only one inventory for the one character.
  */
-public class Inventory {
+public class Inventory{
     /*
     The variables for the Inventory class.
     inventorySlots keeps track of the maximum size of itemsStored.
@@ -136,6 +139,13 @@ public class Inventory {
         }
 
         return item;
+    }
+
+    /**
+     * Sorts by the rarity of each item, uses the getter method so it doesn't sort the List itself
+     */
+    public void SortByRarity() {
+        Collections.sort(getItems(), new SortByRarity());
     }
 
     public static void main(String[] args) {
