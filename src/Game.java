@@ -1,5 +1,7 @@
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.*;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -14,7 +16,8 @@ public class Game {
     // Logger object
     final static Logger log = LogManager.getLogger("test");
     // Character object
-    Character character = Character.getInstance();
+    private static Character character = Character.getInstance();
+    private static Inventory inventory = Inventory.getInstance();
     private Location characterLocation;
 
     /**
@@ -92,6 +95,23 @@ public class Game {
             default:
                 System.out.println("You can't check the time, your watch seems to be broken.");
                 break;
+        }
+    }
+
+    /**
+     * Allows the player to save their results at the end of the game.
+     * It writes the character's stats at the end as well as the inventory.
+     * It DOES NOT act as a save file/state, it only saves how the game ended.
+     */
+    public static void saveGameResults() {
+        File savedResults = new File("./endresults/results.txt");
+
+        try (FileWriter writer = new FileWriter(savedResults)){
+            writer.write(character.toString());
+            writer.write(inventory.toString());
+            System.out.println("Results saved at: " + savedResults.getAbsolutePath());
+        } catch (Exception ex) {
+            System.err.println(ex);
         }
     }
 

@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 /**
  * Character class is used to track variables of player character.
  * Singleton pattern used to create a single instance of Character object in memory for all classes to use.
@@ -246,12 +248,8 @@ public class Character{
     }
 
     /**
-     * Prints each variable for the player to see what how they're doing.
+     * Overriden toString method.
      */
-    public void printStatus() {
-        System.out.println("Health: " + getHealth() + ".");
-        System.out.println("Thirst: " + getThirst() + ".");
-        System.out.println("Hunger: " + getHunger() + ".");
-        System.out.println("Warmth: " + getWarmth() + ".");
-    }
+    @Override
+    public String toString() { return "Health: " + getHealth() + "\n" + "Thirst: " + getThirst() + "\n" + "Hunger: " + getHunger() + "\n" + "Warmth: " + getWarmth() + "\n"; }
 }

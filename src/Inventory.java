@@ -1,5 +1,6 @@
 import org.apache.derby.iapi.store.access.conglomerate.Sort;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +18,7 @@ public class Inventory{
      */
     private int inventorySlots;
     private List<Item> itemsStored = new ArrayList<Item>(inventorySlots);
-    private int slotsFilled = itemsStored.size();
+    private transient int slotsFilled = itemsStored.size();
 
     // Singleton pattern
     private static final Inventory instance = new Inventory();
