@@ -1,6 +1,5 @@
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import java.io.*;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -12,13 +11,111 @@ public class Game {
     // In-game trackers to keep track of game progress.
     private final static int endPoint = 30;
     private static int timeTracker = 0;
+    // Is the game still in the beginning state?
+    private static boolean beginningSection = true;
 
     // Logger object
     final static Logger log = LogManager.getLogger("test");
     // Character object
     private static Character character = Character.getInstance();
+    // Inventory object
     private static Inventory inventory = Inventory.getInstance();
-    private Location characterLocation;
+    // Where the character is
+    private static Location characterLocation;
+
+    // Verb and noun variables
+    private static String verb;
+    private static String noun;
+
+    // F
+    private final static String invalidCommand = "Invalid command.";
+
+    /**
+     * Method for finding verb and noun.
+     * If found, update the verb and noun variables.
+     * @throws IOException
+     */
+    private static void findVerbAndNoun() throws InvalidCommandException, IOException{
+        // Allows for user input in console
+        InputStreamReader input = new InputStreamReader(System.in);
+        BufferedReader reader = new BufferedReader(input);
+
+        try {
+            // Read line of input
+            String line = reader.readLine();
+            // Tokenize input data where the space character is
+            String[] verbAndNoun = line.split(" ");
+
+            // If there are a verb and noun pair
+            if (verbAndNoun.length == 2) {
+                verb = verbAndNoun[0].toLowerCase();
+                noun = verbAndNoun[1].toLowerCase();
+            }
+            // If there is only one word
+            else if (verbAndNoun.length == 1) {
+                verb = verbAndNoun[0].toLowerCase();
+                noun = "";
+            }
+            // If there is any other amount of words
+            else {
+                verb = "";
+                noun = "";
+                throw new InvalidCommandException(invalidCommand);
+            }
+        } catch (Exception ex) {
+            System.err.println(ex);
+            log.error(ex);
+        }
+    }
+
+    private static void processVerbAndNoun() throws InvalidCommandException {
+        switch (verb) {
+            case "help":
+                switch (noun) {
+                    case "":
+                        printCommands();
+                        break;
+                    default:
+                        System.out.println("Help " + noun + " is not valid, only \"help\".");
+                }
+                break;
+            case "check":
+                switch (noun) {
+                    case "status":
+                        System.out.println(character);
+                        break;
+                    case "inventory":
+                        System.out.println(inventory);
+                        break;
+                    default:
+                        System.out.println("You can't check " + noun);
+                }
+                break;
+            case "current":
+            switch (noun) {
+                case "location":
+                    System.out.println(characterLocation);
+                    break;
+                default:
+                    System.out.println("");
+            }
+                break;
+        }
+    }
+
+    /**
+     * Informs the player of all commands they can enter.
+     */
+    private static void printCommands() {
+        System.out.println("help - shows all commands.");
+        System.out.println("check status - shows your health, hunger, thrist, and warmth stats");
+        System.out.println("check inventory - shows you all of your items in your inventory");
+        System.out.println("move north, east, south, west, cabin - you move to the corresponding direction.");
+        System.out.println("use [item name] - uses the item and the effects are applied.");
+        System.out.println("unequip [item name] - unequips items with no limit on times of use.");
+        System.out.println("current location - shows the location you are in");
+        System.out.println("quit - exits the game");
+    }
 
     /**
      * Prints out the initial starting messages. It sets the atmosphere and gives context to the player.
@@ -59,7 +156,7 @@ public class Game {
      * Message depends on the time of day.
      * If time can't be read or invalid value is read, display a filler message.
      */
-    public static void checkWatch() {
+    private static void checkWatch() {
         LocalTime time = LocalTime.now();
         int hour = time.getHour();
         DateTimeFormatter format = DateTimeFormatter.ofPattern("h:m");
@@ -103,15 +200,23 @@ public class Game {
      * It writes the character's stats at the end as well as the inventory.
      * It DOES NOT act as a save file/state, it only saves how the game ended.
      */
-    public static void saveGameResults() {
+    private static void saveGameResults() {
+        // The file where the results are saved
         File savedResults = new File("./endresults/results.txt");
 
-        try (FileWriter writer = new FileWriter(savedResults)){
+        // Try-with resources
+        try (FileWriter writer = new FileWriter(savedResults)) {
+            // Write both the inventory and stats at the end of the game
             writer.write(character.toString());
             writer.write(inventory.toString());
+            // Inform the user
             System.out.println("Results saved at: " + savedResults.getAbsolutePath());
+        } catch (IOException ex) {
+            System.err.println("Error writing file.");
+            log.error("Error writing file.");
         } catch (Exception ex) {
             System.err.println(ex);
+            log.error(ex);
         }
     }
 

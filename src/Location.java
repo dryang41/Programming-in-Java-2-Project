@@ -7,7 +7,8 @@ public class Location {
         this.description = description;
     }
 
-    public void printDescription() {
-        System.out.println(description);
+    @Override
+    public String toString() {
+        return name + " - " + description;
     }
 }
