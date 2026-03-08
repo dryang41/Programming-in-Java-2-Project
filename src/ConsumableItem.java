@@ -7,6 +7,11 @@ public class ConsumableItem extends Item{
     }
 
     /**
+     * @return Amount of uses before item is removed.
+     */
+    public int getAmountOfUses() { return amountOfUses; }
+
+    /**
      * Uses the item and uses the addEffect methods written in character.
      * If there is no valid effect, display the error message.
      * Switch-case statement to look for valid effects to modify, if found, update the variable.

@@ -127,7 +127,7 @@ public class Inventory{
      * Grabs an item from the inventory.
      * @param index The slot where the item is grabbed.
      * @return The item in the slot.
-     */
+     *
     public Item getItem(int index) {
         Item item = null;
         // Decrementing parameter index to make it zero-based
@@ -136,6 +136,38 @@ public class Inventory{
         for (int i = 0; i < slotsFilled; i++) {
             if (index == i) {
                 item = getItems().get(i);
+            }
+        }
+
+        return item;
+    }*/
+
+    public ConsumableItem getConsumable(int index) {
+        ConsumableItem item = null;
+        // Decrementing parameter index to make it zero-based
+        index--;
+
+        for (int i = 0; i < slotsFilled; i++) {
+            if (index == i) {
+                if (getItems().get(i) instanceof ConsumableItem) {
+                    item = (ConsumableItem) getItems().get(i);
+                }
+            }
+        }
+
+        return item;
+    }
+
+    public PassiveItem getPassive(int index) {
+        PassiveItem item = null;
+        // Decrementing parameter index to make it zero-based
+        index--;
+
+        for (int i = 0; i < slotsFilled; i++) {
+            if (index == i) {
+                if (getItems().get(i) instanceof PassiveItem) {
+                    item = (PassiveItem) getItems().get(i);
+                }
             }
         }
 
@@ -153,10 +185,11 @@ public class Inventory{
         Inventory inventory = getInstance();
         inventory.setInventorySlots(2);
         Item medkit = new ConsumableItem("asd", "asd", Rarity.Common, "adwa", 67);
-        System.out.println(inventory.addItem(medkit));
+        System.out.println(medkit instanceof Item);
+        //System.out.println(inventory.addItem(medkit));
 
-        System.out.println(inventory.addItem(medkit));
-        System.out.println(inventory.removeItem(2));
+        //System.out.println(inventory.addItem(medkit));
+        //System.out.println(inventory.removeItem(2));
         //System.out.println(inventory);
     }
 }

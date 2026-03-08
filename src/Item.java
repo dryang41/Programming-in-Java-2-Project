@@ -97,7 +97,7 @@ public abstract class Item implements Comparable<Item>{
      * When it finds one, it uses the character's built-in addEffect method.
      * If none is found, display error message.
      */
-    public void applyEffect() {
+    protected void applyEffect() {
         switch (getEffect()) {
             case ("health"):
                 character.addHealth(getEffectiveness());

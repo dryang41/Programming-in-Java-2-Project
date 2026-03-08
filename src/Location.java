@@ -7,6 +7,11 @@ public class Location {
         this.description = description;
     }
 
+    /**
+     * @return Name of location
+     */
+    public String getName() { return name; }
+
     @Override
     public String toString() {
         return name + " - " + description;

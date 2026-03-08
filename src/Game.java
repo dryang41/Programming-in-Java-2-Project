@@ -3,11 +3,14 @@ import org.apache.logging.log4j.Logger;
 import java.io.*;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /*
 * Game class to run the game itself.
 */
 public class Game {
+    // Makes sure the game is still running
+    private static boolean gameOn = true;
     // In-game trackers to keep track of game progress.
     private final static int endPoint = 30;
     private static int timeTracker = 0;
@@ -16,18 +19,22 @@ public class Game {
 
     // Logger object
     final static Logger log = LogManager.getLogger("test");
+    // Database object
+    private final static DatabaseManager database = new DatabaseManager();
     // Character object
     private static Character character = Character.getInstance();
     // Inventory object
     private static Inventory inventory = Inventory.getInstance();
-    // Where the character is
-    private static Location characterLocation;
+    // List object to hold all locations
+    private static final List<Location> allLocations = database.createLocations();
+    // Where the character is, it initializes it to last in List because that's where cabin is
+    private static Location characterLocation = allLocations.getLast();
 
     // Verb and noun variables
     private static String verb;
     private static String noun;
 
-    // F
+    // Message for InvalidCommandException exception
     private final static String invalidCommand = "Invalid command.";
 
     /**
@@ -60,7 +67,7 @@ public class Game {
             else {
                 verb = "";
                 noun = "";
-                throw new InvalidCommandException(invalidCommand);
+                System.out.println("There can only be a verb-noun pair command, or just a verb command.");
             }
         } catch (Exception ex) {
             System.err.println(ex);
@@ -71,13 +78,8 @@ public class Game {
     private static void processVerbAndNoun() throws InvalidCommandException {
         switch (verb) {
             case "help":
-                switch (noun) {
-                    case "":
-                        printCommands();
-                        break;
-                    default:
-                        System.out.println("Help " + noun + " is not valid, only \"help\".");
-                }
+                if (noun.isEmpty()) { printCommands(); }
+                else { System.out.println("Help " + noun + " is not valid, only \"help\"."); }
                 break;
             case "check":
                 switch (noun) {
@@ -87,19 +89,100 @@ public class Game {
                     case "inventory":
                         System.out.println(inventory);
                         break;
+                    case "watch":
+                        checkWatch();
+                        break;
                     default:
                         System.out.println("You can't check " + noun);
                 }
                 break;
             case "current":
-            switch (noun) {
-                case "location":
-                    System.out.println(characterLocation);
-                    break;
-                default:
-                    System.out.println("");
-            }
+                if (noun.equals("location")) { System.out.println(characterLocation); }
+                else { System.out.println("There is no \"current " + noun + "\" command."); }
                 break;
+            case "move":
+                switch (noun) {
+                    case "north":
+                        updateLocation("north");
+                        break;
+                    case "south":
+                        updateLocation("south");
+                        break;
+                    case "west":
+                        updateLocation("west");
+                        break;
+                    case "east":
+                        updateLocation("east");
+                        break;
+                    case "cabin":
+                        updateLocation("cabin");
+                        break;
+                    default:
+                        System.out.println(noun + " is not a valid location to move!");
+                        break;
+                }
+            case "use":
+                try {
+                    int index = Integer.parseInt(noun);
+                    ConsumableItem consumableItem = inventory.getConsumable(index);
+                    PassiveItem passiveItem = inventory.getPassive(index);
+
+                    if (consumableItem != null) {
+                        consumableItem.UseItem();
+                    }
+                    else if (passiveItem != null) {
+                        passiveItem.UseItem();
+                    }
+                    else {
+                        System.out.println("That slot is not filled or doesn't exist!");
+                    }
+                } catch (Exception ex) {
+                    System.out.println("That is not a valid number!");
+                }
+                break;
+            case "unequip":
+                try {
+                    int index = Integer.parseInt(noun);
+
+                    PassiveItem passiveItem = inventory.getPassive(index);
+
+                    if (passiveItem != null) {
+                        passiveItem.UnequipItem();
+                    }
+                    else {
+                        System.out.println("That slot is not filled with a unequippable item.");
+                    }
+                } catch (Exception ex) {
+                    System.out.println("That is not a valid number!");
+                }
+                break;
+            case "quit":
+                gameOn = false;
+            default:
+                System.out.println(verb + " " + noun + " is not a valid command!");
+                break;
+        }
+    }
+
+    /**
+     * Updates the characterLocation variable to a new location.
+     * @param name Parameter for seeing where to move the character.
+     */
+    private static void updateLocation(String name) {
+        // Temporary copy of current location
+        Location copy = characterLocation;
+        // Loop through and check if parameter matches a location's name
+        for (Location l : allLocations) {
+            if (l.getName().toLowerCase().equals(name.toLowerCase())) {
+                // Update variable
+                characterLocation = l;
+                System.out.println("You moved " + name);
+            }
+        }
+
+        // If characterLocation is not updated, inform player.
+        if (copy.equals(characterLocation)) {
+            System.out.println("You did not move anywhere!");
         }
     }
 
@@ -107,14 +190,16 @@ public class Game {
      * Informs the player of all commands they can enter.
      */
     private static void printCommands() {
-        System.out.println("help - shows all commands.");
-        System.out.println("check status - shows your health, hunger, thrist, and warmth stats");
-        System.out.println("check inventory - shows you all of your items in your inventory");
-        System.out.println("move north, east, south, west, cabin - you move to the corresponding direction.");
-        System.out.println("use [item name] - uses the item and the effects are applied.");
-        System.out.println("unequip [item name] - unequips items with no limit on times of use.");
-        System.out.println("current location - shows the location you are in");
-        System.out.println("quit - exits the game");
+        System.out.println("Help - shows all commands.");
+        System.out.println("Check Status - shows your health, hunger, thirst, and warmth stats.");
+        System.out.println("Check Inventory - shows you all of your items in your inventory.");
+        System.out.println("Check Watch - you will take a look at your watch.");
+        System.out.println("Move North, East, South, West, Cabin - you move to the corresponding direction.");
+        System.out.println("Use [item slot] - uses the item and the effects are applied.");
+        System.out.println("Unequip [item slot] - unequips items with no limit on times of use.");
+        System.out.println("Current Location - shows the location you are in");
+        System.out.println("Quit - exits the game");
+        System.out.println("Note: Commands only have to spelt right to work.");
     }
 
     /**
@@ -222,9 +307,13 @@ public class Game {
 
     public static void main(String[] args) {
         startMessage();
+
         // initial exception handling structure
         try {
-
+            while(gameOn) {
+                findVerbAndNoun();
+                processVerbAndNoun();
+            }
         // if index is out of range for array
         }catch (ArrayIndexOutOfBoundsException ex) {
             System.err.println("Index out of range of array.");

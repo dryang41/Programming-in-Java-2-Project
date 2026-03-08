@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * Class to manage the database of the game. This database will hold the data for all items and possibly events.
@@ -69,6 +70,21 @@ public final class DatabaseManager {
                     + " rarity INTEGER NOT NULL,"
                     + " effect VARCHAR(50) NOT NULL,"
                     + " amountOfUses INTEGER)");
+
+            // Locations table with name as primary key, and a description.
+            statement.executeUpdate("CREATE TABLE locations(" +
+                    " name VARCHAR(25) PRIMARY KEY NOT NULL," +
+                    " description VARCHAR(255) NOT NULL)");
+
+            // Events table with an id that auto-increments, description, effectiveness, itemid and locationname foreign keys
+            statement.executeUpdate("CREATE TABLE events(" +
+                    " eventid INTEGER PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)," +
+                    " description VARCHAR(255) NOT NULL," +
+                    " effectiveness INTEGER," +
+                    " itemid INTEGER," +
+                    " locationname VARCHAR(25) NOT NULL," +
+                    " CONSTRAINT fk_itemid FOREIGN KEY (itemid) REFERENCES items(itemid)," +
+                    " CONSTRAINT fk_location FOREIGN KEY (locationname) REFERENCES locations(name))");
             //System.out.println("Table successfully created.");
         } catch (SQLException ex) {
             System.err.println("Failure to initialize database.");
@@ -103,6 +119,13 @@ public final class DatabaseManager {
             // Warm clothing passive item
             statement.executeUpdate("INSERT INTO items (name, description, rarity, effect) VALUES ('Warm Clothes', 'A baggy set of black clothing that reminds you of home, it somewhat warms you up.', 2, 'warmth')");
 
+            // A location for every cardinal direction plus the central cabin
+            statement.executeUpdate("INSERT INTO locations (name, description) VALUES ('North', 'An impressively massive mountain range, the cold and rough terrain will make any expedition treacherous. You need to proceed with caution.')");
+            statement.executeUpdate("INSERT INTO locations (name, description) VALUES ('West', 'A vast, beautiful, but dangerous sea. It may look very enticing to just jump in and go for a swim, but the unpredictable strong currents will certainly drag you away.')");
+            statement.executeUpdate("INSERT INTO locations (name, description) VALUES ('South', 'An impressively massive mountain range, the cold and rough terrain will make any expedition treacherous. You need to proceed with caution.')");
+            statement.executeUpdate("INSERT INTO locations (name, description) VALUES ('East', 'A dense, mazelike jungle where any deep path will lead to being lost. You should not wander too deep in the jungle, or you may never return.')");
+            statement.executeUpdate("INSERT INTO locations (name, description) VALUES ('Cabin', 'The closest place to home, a wooden cabin that lays in the middle of the land. A warm interior and soft bed comforts you greatly.')");
+
             //System.out.println("Tables successfully populated.");
         } catch (SQLException ex) {
             System.err.println("Failure to populate database.");
@@ -111,5 +134,22 @@ public final class DatabaseManager {
             System.err.println("An error has occurred.");
             System.err.println(ex.getMessage());
         }
+    }
+
+    public ArrayList<Location> createLocations() {
+        ArrayList<Location> locations = new ArrayList<>();
+        try {
+            Statement statement = getConnection().createStatement();
+
+            ResultSet rs = statement.executeQuery("SELECT * FROM locations");
+
+            while (rs.next()) {
+                locations.add(new Location(rs.getString("name"), rs.getString("description")));
+            }
+        } catch (SQLException ex) {
+            System.err.println("SQL Error");
+        }
+
+        return locations;
     }
 }

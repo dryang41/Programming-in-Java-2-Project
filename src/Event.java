@@ -4,7 +4,6 @@ public class Event {
     private String description;
     private String effectOnCharacter;
     private int effectiveness;
-    private boolean repeatable;
     private Item itemGiven;
     private Location locationPossible;
 
@@ -16,12 +15,10 @@ public class Event {
      * @param description Description of event.
      * @param effectOnCharacter The effect that is modified.
      * @param effectiveness How much the effectOnCharacter is changed by.
-     * @param repeatable If the event can happen more than once.
      * @param locationPossible Locations where the event can fire.
      */
-    public Event(String description, String effectOnCharacter, int effectiveness, boolean repeatable, Location locationPossible) {
+    public Event(String description, String effectOnCharacter, int effectiveness, Location locationPossible) {
         this.description = description;
-        this.repeatable = repeatable;
         this.effectOnCharacter = effectOnCharacter;
         this.effectiveness = effectiveness;
         this.locationPossible = locationPossible;
@@ -30,13 +27,11 @@ public class Event {
     /**
      * Constructor for events that give items to the player.
      * @param description Description of event.
-     * @param repeatable If the event can happen more than once.
      * @param itemGiven The item the player will receive.
      * @param locationPossible Locations where the event can fire.
      */
-    public Event(String description, boolean repeatable, Item itemGiven, Location locationPossible) {
+    public Event(String description, Item itemGiven, Location locationPossible) {
         this.description = description;
-        this.repeatable = repeatable;
         this.itemGiven = itemGiven;
         this.locationPossible = locationPossible;
     }
@@ -44,12 +39,10 @@ public class Event {
     /**
      * Constructor for events that don't give items to the player.
      * @param description Description of event.
-     * @param repeatable If the event can happen more than once.
      * @param locationPossible Locations where the event can fire.
      */
-    public Event(String description, boolean repeatable, Location locationPossible) {
+    public Event(String description, Location locationPossible) {
         this.description = description;
-        this.repeatable = repeatable;
         this.locationPossible = locationPossible;
     }
 
@@ -67,11 +60,6 @@ public class Event {
      * @return How much the effect that applies to the character.
      */
     public int getEffectiveness() { return effectiveness; }
-
-    /**
-     * @return If the event can fire more than once.
-     */
-    public boolean getRepeatable() { return repeatable; }
 
     /**
      * @return The item that the player receives.
