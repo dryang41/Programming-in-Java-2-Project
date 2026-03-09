@@ -1,7 +1,7 @@
 public class ConsumableItem extends Item{
     private int amountOfUses;
 
-    public ConsumableItem(String name, String description, Rarity rarity, String effect, int amountOfUses){
+    public ConsumableItem(String name, String description, int rarity, String effect, int amountOfUses){
         super(name, description, rarity, effect);
         this.amountOfUses = amountOfUses;
     }

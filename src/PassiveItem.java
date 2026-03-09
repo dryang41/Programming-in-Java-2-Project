@@ -1,6 +1,6 @@
 public class PassiveItem extends Item{
 
-    public PassiveItem(String name, String description, Rarity rarity, String effect) {
+    public PassiveItem(String name, String description, int rarity, String effect) {
         super(name, description, rarity, effect);
     }
 

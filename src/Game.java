@@ -78,7 +78,7 @@ public class Game {
     private static void processVerbAndNoun() throws InvalidCommandException {
         switch (verb) {
             case "help":
-                if (noun.isEmpty()) { printCommands(); }
+                if (noun.isBlank()) { printCommands(); }
                 else { System.out.println("Help " + noun + " is not valid, only \"help\"."); }
                 break;
             case "check":
@@ -88,6 +88,8 @@ public class Game {
                         break;
                     case "inventory":
                         System.out.println(inventory);
+                        System.out.println("Would you like to sort your inventory? Type \"name\" or \"rarity\" to sort by name or rarity.");
+                        sortInventory();
                         break;
                     case "watch":
                         checkWatch();
@@ -103,10 +105,16 @@ public class Game {
             case "move":
                 switch (noun) {
                     case "north":
+
                         updateLocation("north");
                         break;
                     case "south":
                         updateLocation("south");
+                        int min = 1;
+                        int max = 3;
+                        int randomNumber = (int)(Math.random() * (max - min + 1)) + min;
+                        Event event = database.createEvent(randomNumber);
+                        event.executeEvent();
                         break;
                     case "west":
                         updateLocation("west");
@@ -157,10 +165,52 @@ public class Game {
                 }
                 break;
             case "quit":
-                gameOn = false;
+                if (noun.isEmpty()) { gameOn = false; }
+                else { System.out.println("quit " + noun + " is not a valid command"); }
+                break;
             default:
                 System.out.println(verb + " " + noun + " is not a valid command!");
                 break;
+        }
+    }
+
+    /**
+     * Method for both setting up game
+     */
+    private static void introSequence() {
+        inventory.addInventorySlots(character.getStartingSlots());
+        startMessage();
+    }
+
+    /**
+     * Method for ending the game.
+     */
+    private static void endGame() {
+        // Disable game loop
+        gameOn = false;
+        try {
+            // Ask user
+            System.out.println("Would you like to save the game results? Type \"yes\" or \"no\".");
+            // While-loop condition
+            boolean promptAgain = true;
+            while (promptAgain) {
+                // Gets user-input
+                findVerbAndNoun();
+                // Save results and end loop if yes
+                if (verb.equals("yes") && noun.isBlank()) {
+                    saveGameResults();
+                    promptAgain = false;
+                // Just end loop if no
+                } else if (verb.equals("no") && noun.isBlank()) {
+                    promptAgain = false;
+                // Invalid command
+                } else {
+                    System.out.println(verb + " " + noun + "is not a valid command!");
+                }
+            }
+        } catch (Exception ex) {
+            System.err.println(ex);
+            log.error(ex);
         }
     }
 
@@ -280,6 +330,34 @@ public class Game {
         }
     }
 
+    private static void sortInventory() {
+        try {
+            // While-loop condition
+            boolean promptAgain = true;
+            while (promptAgain) {
+                // Gets user-input
+                findVerbAndNoun();
+                // Save results and end loop if yes
+                if (verb.equals("name") && noun.isBlank()) {
+                    inventory.sortByName();
+                    System.out.println(inventory);
+                    promptAgain = false;
+                    // Just end loop if no
+                } else if (verb.equals("rarity") && noun.isBlank()) {
+                    inventory.sortByRarity();
+                    System.out.println(inventory);
+                    promptAgain = false;
+                    // Invalid command
+                } else {
+                    System.out.println(verb + " " + noun + "is not a valid command!");
+                }
+            }
+        } catch (Exception ex) {
+            System.err.println(ex);
+            log.error(ex);
+        }
+    }
+
     /**
      * Allows the player to save their results at the end of the game.
      * It writes the character's stats at the end as well as the inventory.
@@ -313,6 +391,10 @@ public class Game {
             while(gameOn) {
                 findVerbAndNoun();
                 processVerbAndNoun();
+
+                if (character.getHealth() == 0) {
+                    endGame();
+                }
             }
         // if index is out of range for array
         }catch (ArrayIndexOutOfBoundsException ex) {

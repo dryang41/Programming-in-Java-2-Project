@@ -18,6 +18,8 @@ public class Character{
     private int hunger = maximumValue;
     private int warmth = maximumValue;
 
+    private final int startingSlots = 2;
+
     private static final Character instance = new Character();
 
     public static Character getInstance(){
@@ -51,6 +53,8 @@ public class Character{
     public int getWarmth() {
         return warmth;
     }
+
+    public int getStartingSlots() { return startingSlots; }
 
     /**
      * Checks the amount of health the player currently has and adds the amount.

@@ -16,7 +16,23 @@ public abstract class Item implements Comparable<Item>{
     protected Character character = Character.getInstance();
 
     // Constructor
-    public Item(String name, String description, Rarity rarity, String effect) {
+    public Item(String name, String description, int rarityNum, String effect) {
+        Rarity rarity = null;
+
+        if (rarityNum == 1) {
+            rarity = Rarity.Common;
+        }
+        else if (rarityNum == 2) {
+            rarity = Rarity.Rare;
+        }
+        else if (rarityNum == 3) {
+            rarity = Rarity.Ultrarare;
+        }
+        else {
+            rarity = Rarity.Common;
+            System.err.println("That is not a valid rarity.");
+        }
+
         this.name = name;
         this.description = description;
         this.rarity = rarity;

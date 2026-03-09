@@ -14,11 +14,9 @@ public class Inventory{
     The variables for the Inventory class.
     inventorySlots keeps track of the maximum size of itemsStored.
     itemStored is a List object that stores all items.
-    slotsFilled is just the size of itemsStored, it's only there to have itemsStored.size() everywhere.
      */
     private int inventorySlots;
     private List<Item> itemsStored = new ArrayList<Item>(inventorySlots);
-    private transient int slotsFilled = itemsStored.size();
 
     // Singleton pattern
     private static final Inventory instance = new Inventory();
@@ -29,7 +27,7 @@ public class Inventory{
     public List<Item> getItems() { return itemsStored; }
 
     // Setter
-    public void setInventorySlots(int amount) { inventorySlots = amount; }
+    public void addInventorySlots(int amount) { inventorySlots += amount; }
 
     /**
      * Grabs all items from the List object and puts them into a StringBuilder.
@@ -58,7 +56,7 @@ public class Inventory{
         boolean itemAdded = false;
 
         // First checks if there is room for another item.
-        if (slotsFilled < inventorySlots) {
+        if (itemsStored.size() < inventorySlots) {
             itemsStored.add(i);
             System.out.println(i.getName() + " added to your inventory.");
             itemAdded = true;
@@ -81,7 +79,7 @@ public class Inventory{
         // Decrementing parameter index to make it zero-based
         index--;
 
-        for (int i = 0; i < slotsFilled; i++) {
+        for (int i = 0; i < itemsStored.size(); i++) {
             if (index == i) {
                 itemsStored.remove(i);
                 itemRemoved = true;
@@ -107,7 +105,7 @@ public class Inventory{
         // Decrementing parameter index to make it zero-based
         index--;
 
-        for (int i = 0; i < slotsFilled; i++) {
+        for (int i = 0; i < itemsStored.size(); i++) {
             if (index == i) {
                 System.out.println(getItems().get(i).getName() + " removed from your inventory.");
                 itemsStored.remove(i);
@@ -147,7 +145,7 @@ public class Inventory{
         // Decrementing parameter index to make it zero-based
         index--;
 
-        for (int i = 0; i < slotsFilled; i++) {
+        for (int i = 0; i < itemsStored.size(); i++) {
             if (index == i) {
                 if (getItems().get(i) instanceof ConsumableItem) {
                     item = (ConsumableItem) getItems().get(i);
@@ -163,7 +161,7 @@ public class Inventory{
         // Decrementing parameter index to make it zero-based
         index--;
 
-        for (int i = 0; i < slotsFilled; i++) {
+        for (int i = 0; i < itemsStored.size(); i++) {
             if (index == i) {
                 if (getItems().get(i) instanceof PassiveItem) {
                     item = (PassiveItem) getItems().get(i);
@@ -175,21 +173,16 @@ public class Inventory{
     }
 
     /**
-     * Sorts by the rarity of each item, uses the getter method so it doesn't sort the List itself
+     * Sorts by the rarity of each item
      */
-    public void SortByRarity() {
-        Collections.sort(getItems(), new SortByRarity());
+    public void sortByRarity() {
+        Collections.sort(itemsStored, new SortByRarity());
     }
 
-    public static void main(String[] args) {
-        Inventory inventory = getInstance();
-        inventory.setInventorySlots(2);
-        Item medkit = new ConsumableItem("asd", "asd", Rarity.Common, "adwa", 67);
-        System.out.println(medkit instanceof Item);
-        //System.out.println(inventory.addItem(medkit));
-
-        //System.out.println(inventory.addItem(medkit));
-        //System.out.println(inventory.removeItem(2));
-        //System.out.println(inventory);
+    /**
+     * Sorts by the name of each item
+     */
+    public void sortByName() {
+        Collections.sort(getItems());
     }
 }

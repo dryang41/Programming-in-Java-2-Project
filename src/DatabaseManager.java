@@ -80,6 +80,7 @@ public final class DatabaseManager {
             statement.executeUpdate("CREATE TABLE events(" +
                     " eventid INTEGER PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)," +
                     " description VARCHAR(255) NOT NULL," +
+                    " effectoncharacter VARCHAR(25)," +
                     " effectiveness INTEGER," +
                     " itemid INTEGER," +
                     " locationname VARCHAR(25) NOT NULL," +
@@ -126,6 +127,9 @@ public final class DatabaseManager {
             statement.executeUpdate("INSERT INTO locations (name, description) VALUES ('East', 'A dense, mazelike jungle where any deep path will lead to being lost. You should not wander too deep in the jungle, or you may never return.')");
             statement.executeUpdate("INSERT INTO locations (name, description) VALUES ('Cabin', 'The closest place to home, a wooden cabin that lays in the middle of the land. A warm interior and soft bed comforts you greatly.')");
 
+            statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES ('As you traverse the thick jungle interior, trying not to get lost, you trip on a thick root. The fall hurts you a bit.', 'health', -1, 'South')");
+            statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES ('You make your way through the jungle as you come across a small pond. The water of the pond seems to have healing properties.', 'health', 2, 'South')");
+            statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES ('You smell something quite appeitzing in the distance, you make your way to it. It is a delicious tree of apples, you collect some.', 7, 'South')");
             //System.out.println("Tables successfully populated.");
         } catch (SQLException ex) {
             System.err.println("Failure to populate database.");
@@ -136,14 +140,18 @@ public final class DatabaseManager {
         }
     }
 
+    /**
+     * Converts all data from locations table into Location objects and puts them into a List.
+     * @return ArrayList of all locations.
+     */
     public ArrayList<Location> createLocations() {
         ArrayList<Location> locations = new ArrayList<>();
-        try {
-            Statement statement = getConnection().createStatement();
 
-            ResultSet rs = statement.executeQuery("SELECT * FROM locations");
-
+        // Try-with resources
+        try (Statement statement = getConnection().createStatement(); ResultSet rs = statement.executeQuery("SELECT * FROM locations")){
+            // For every item in locations table
             while (rs.next()) {
+                // Adding to storage ArrayList
                 locations.add(new Location(rs.getString("name"), rs.getString("description")));
             }
         } catch (SQLException ex) {
@@ -151,5 +159,95 @@ public final class DatabaseManager {
         }
 
         return locations;
+    }
+
+    /**
+     * Takes a name of a location and converts it into a location object based on data from locations table.
+     * @param name Primary key of location
+     * @return Location object
+     */
+    private Location convertNametoLocation(String name) {
+        Location location = null;
+
+        try (Statement statement = getConnection().createStatement(); PreparedStatement pstatement = getConnection().prepareStatement("SELECT * FROM locations WHERE name = ?")) {
+            pstatement.setString(1, name);
+            ResultSet rs = pstatement.executeQuery();
+
+            while(rs.next()) {
+                location = new Location(rs.getString("name"), rs.getString("description"));
+            }
+        } catch (SQLException ex) {
+            System.err.println("SQL Error");
+        } catch (Exception ex) {
+            System.err.println(ex);
+        }
+
+        return location;
+    }
+
+    /**
+     * Takes the primary key of item and converts it into a item object based on data from items table.
+     * @param id Primary key of item
+     * @return Location object
+     */
+    private Item convertIDtoItem(int id) {
+        Item item = null;
+
+        try (Statement statement = getConnection().createStatement(); PreparedStatement pstatement = getConnection().prepareStatement("SELECT * FROM items WHERE itemid = ?")) {
+            pstatement.setInt(1, id);
+            ResultSet rs = pstatement.executeQuery();
+
+            while(rs.next()) {
+                if (rs.getInt("amountOfUses") == 0) {
+                    item = new PassiveItem(rs.getString("name"), rs.getString("description"), rs.getInt("rarity"), rs.getString("effect"));
+                }
+                else {
+                    item = new ConsumableItem(rs.getString("name"), rs.getString("description"), rs.getInt("rarity"), rs.getString("effect"), rs.getInt("amountOfUses"));
+                }
+            }
+        } catch (SQLException ex) {
+            System.err.println("SQL Error");
+        } catch (Exception ex) {
+            System.err.println(ex);
+        }
+
+        return item;
+    }
+
+    /**
+     * Creates an event object based on a number given to the method.
+     * @param id A random number that is also the primary key of an event in events table.
+     * @return The event that is based on the parameter id.
+     */
+    public Event createEvent(int id) {
+        Event event = null;
+
+        try (Statement statement = getConnection().createStatement()) {
+            PreparedStatement pstatement = getConnection().prepareStatement("SELECT * FROM events WHERE eventid = ?");
+            pstatement.setInt(1, id);
+            ResultSet rs = pstatement.executeQuery();
+            while (rs.next()) {
+                String description = rs.getString("description");
+                String effectOnCharacter = rs.getString("effectoncharacter");
+                int effectiveness = rs.getInt("effectiveness");
+                int itemGivenKey = rs.getInt("itemid");
+                String locationPossibleKey = rs.getString("locationname");
+                if (!(effectOnCharacter == null || effectOnCharacter.isEmpty())) {
+                    event = new Event(description, effectOnCharacter, effectiveness, convertNametoLocation(locationPossibleKey));
+                }
+                else if (!(itemGivenKey == 0)) {
+                    event = new Event(description, convertIDtoItem(itemGivenKey), convertNametoLocation(locationPossibleKey));
+                }
+                else {
+                    event = new Event(description, convertNametoLocation(locationPossibleKey));
+                }
+            }
+        } catch (SQLException ex) {
+            System.err.println("SQL Error");
+        } catch (Exception ex) {
+            System.err.println(ex);
+        }
+
+        return event;
     }
 }

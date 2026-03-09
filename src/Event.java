@@ -9,6 +9,8 @@ public class Event {
 
     // Grabbing character instance to modify if needed.
     private Character character = Character.getInstance();
+    // Grabbing inventory instance to add items if needed.
+    private Inventory inventory = Inventory.getInstance();
 
     /**
      * Constructor for events that apply an effect on the character.
@@ -77,6 +79,9 @@ public class Event {
      * Lastly, prints the description of the event.
      */
     public void executeEvent() {
+        System.out.println(getDescription());
+
+        // If there is an effect on the character and it's positive
         if (!(getEffectOnCharacter() == null || getEffectOnCharacter().isEmpty()) && getEffectiveness() > 0) {
             switch (getEffectOnCharacter()) {
                 case ("health"):
@@ -96,6 +101,7 @@ public class Event {
                     break;
             }
         }
+        // If there is an effect on the character and it's negative
         else if (!(getEffectOnCharacter() == null || getEffectOnCharacter().isEmpty()) && getEffectiveness() < 0) {
             switch (getEffectOnCharacter()) {
                 case ("health"):
@@ -116,10 +122,9 @@ public class Event {
             }
         }
 
+        // If there is an item, give it to the player
         if (getItemGiven() != null) {
-
+            inventory.addItem(getItemGiven());
         }
-
-        System.out.println(getDescription());
     }
 }
