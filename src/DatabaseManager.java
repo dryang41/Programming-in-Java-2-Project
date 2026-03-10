@@ -97,10 +97,10 @@ public final class DatabaseManager {
     }
 
     /**
-     * Populates the tables with data.
+     * Populates the items table with data.
      * @param c Connection object to database.
      */
-    private static void PopulateDatabase(Connection c) {
+    private static void populateItems(Connection c) {
         // Try with resources
         try (Statement statement = c.createStatement()) {
             // Lantern that the player is given at the start of the game.
@@ -119,25 +119,92 @@ public final class DatabaseManager {
             statement.executeUpdate("INSERT INTO items (name, description, rarity, effect, amountOfUses) VALUES ('Food', 'A tasty edible meal that brings great pleasure, it restores a lot of hunger.', 3, 'hunger', 1)");
             // Warm clothing passive item
             statement.executeUpdate("INSERT INTO items (name, description, rarity, effect) VALUES ('Warm Clothes', 'A baggy set of black clothing that reminds you of home, it somewhat warms you up.', 2, 'warmth')");
+        } catch (SQLException ex) {
+            System.err.println("Failure to populate items table.");
+            System.err.println(ex.getMessage());
+        } catch (Exception ex) {
+            System.err.println("An error has occurred.");
+            System.err.println(ex.getMessage());
+        }
+    }
 
+    /**
+     * Populates the locations table with data.
+     * @param c Connection object to database.
+     */
+    private static void populateLocations(Connection c) {
+        // Try-with resources
+        try (Statement statement = c.createStatement()) {
             // A location for every cardinal direction plus the central cabin
             statement.executeUpdate("INSERT INTO locations (name, description) VALUES ('North', 'An impressively massive mountain range, the cold and rough terrain will make any expedition treacherous. You need to proceed with caution.')");
             statement.executeUpdate("INSERT INTO locations (name, description) VALUES ('West', 'A vast, beautiful, but dangerous sea. It may look very enticing to just jump in and go for a swim, but the unpredictable strong currents will certainly drag you away.')");
             statement.executeUpdate("INSERT INTO locations (name, description) VALUES ('South', 'An impressively massive mountain range, the cold and rough terrain will make any expedition treacherous. You need to proceed with caution.')");
             statement.executeUpdate("INSERT INTO locations (name, description) VALUES ('East', 'A dense, mazelike jungle where any deep path will lead to being lost. You should not wander too deep in the jungle, or you may never return.')");
             statement.executeUpdate("INSERT INTO locations (name, description) VALUES ('Cabin', 'The closest place to home, a wooden cabin that lays in the middle of the land. A warm interior and soft bed comforts you greatly.')");
-
-            statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES ('As you traverse the thick jungle interior, trying not to get lost, you trip on a thick root. The fall hurts you a bit.', 'health', -1, 'South')");
-            statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES ('You make your way through the jungle as you come across a small pond. The water of the pond seems to have healing properties.', 'health', 2, 'South')");
-            statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES ('You smell something quite appeitzing in the distance, you make your way to it. It is a delicious tree of apples, you collect some.', 7, 'South')");
-            //System.out.println("Tables successfully populated.");
         } catch (SQLException ex) {
-            System.err.println("Failure to populate database.");
+            System.err.println("Failure to populate locations table.");
             System.err.println(ex.getMessage());
         } catch (Exception ex) {
             System.err.println("An error has occurred.");
             System.err.println(ex.getMessage());
         }
+    }
+
+    /**
+     * Populates the events table with data.
+     * @param c Connection object to database.
+     */
+    private static void populateEvents(Connection c) {
+        try (Statement statement = c.createStatement()) {
+            // All cabin events, id's 1 and 2
+            statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES ('You grab the lantern and the light fills the room. There is only a bed and a desk in the room, you see a door that leads outside. You should open the door and head outside.', 1, 'Cabin')");
+            statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES ('You walk back to the place where you started, the cabin. There is something odd in the distance, there is a backpack. Was that always there? You grab the backpack and something is inside, an empty bottle.', 5, 'Cabin')");
+
+            // All north events, id's 3 through 8
+            statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES('When you approach the foot of the mountain range, you come across a set of bulky clothing. You grab it and take it for yourself.', 8, 'North')");
+            statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES('You head into the mountain range and after a little bit of looking around, you see a well preserved pack of meat. It still seems edible.', 10, 'North')");
+            statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES('The harsh, bitter cold takes you by surprise, it is so cold that any warm clothing may not work.', 'warmth', -2, 'North')");
+            statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES('As you walk across the rugged terrain, a rock rips your clothing and the opening allows the cold to hit you hard.', 'warmth', -2, 'North')");
+            statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES('As the snow falls from the sky, you decide to open your mouth and consume snow. The snow melts as it hits your mouth and quite tasty.', 'thirst', 1, 'North')");
+
+            // All west events, id's 9 through 14
+            statement.executeUpdate("INSERT INTO events (description, locationname) VALUES('You approach the beach and look out into the beautiful sea. You know it is best to not try and swim.', 'West')");
+            statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES('You walk across the beach as you see something in the sand. It is a pack of heals, did that wash ashore?', 3, 'West')");
+            statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES('There is a strange sound coming from the sea, a metal crate is somehow floating in the water. It washes ashore and is filled with food.', 9, 'West')");
+            statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES('Despite knowing the rough seas will certainly overpower you, you jump in the water anyway. The currents drag you under and fill your lungs, thankfully, you make it back onto land.', 'health', -3, 'West')");
+            statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES('You build a pit in the sand and fill it with water, and the Sun warms up the water. You take a dip and it is so comfortable, you wish you could stay there forever.', 'health', 1, 'West')");
+
+            // All south events, id's 15 through 20
+            statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES ('As you traverse the thick jungle interior, trying not to get lost, you trip on a thick root. The fall hurts you a bit.', 'health', -1, 'South')");
+            statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES ('You make your way through the jungle as you come across a small pond. The water of the pond seems to have healing properties.', 'health', 2, 'South')");
+            statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES ('You smell something quite appeitzing in the distance, you make your way to it. It is a delicious tree of apples, you collect some.', 7, 'South')");
+            statement.executeUpdate("INSERT INTO events (description, locationname) VALUES ('You stay on the path to not get lost. Despite your best efforts, you find nothing. At least you did not get lost', 'South')");
+            statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES ('You walk through the forest and get lost. You eventually find your way out but journey makes you hungry.', 'hunger', -2, 'South')");
+
+            // All east events, id's 21 through 26
+            statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES('In the barren desert, you somehow spot some vegatation, a cactus. You collect the cactus for some food just in case.', 8, 'East')");
+            statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES('You walk across the desert, you shoes sinking into the hot sand. You walk peacefully as you trip over something, a medkit.', 4, 'East')");
+            statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES ('The hot desert Sun hits your skin making you sweat a lot. The profusely sweating makes your throat dry and thirsty.', 'thirst', -2, 'East')");
+            statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES ('As you walk across the desert, your foot suddenly sinks deep into the sand. Your leg gets scratched on something in the sand, injuring you.', 'health', -2, 'East')");
+            statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES ('You hear something creak in the distance, could it be something? You see a giant shadow follow you, you run. After some distance, you realize it was a false alarm, though the running makes you very hungry', 'hunger', -3, 'East')");
+
+        } catch (SQLException ex) {
+            System.err.println("Failure to populate events table.");
+            System.err.println(ex.getMessage());
+        } catch (Exception ex) {
+            System.err.println("An error has occurred.");
+            System.err.println(ex.getMessage());
+        }
+    }
+
+    /**
+     * Populates the tables with data.
+     * @param c Connection object to database.
+     */
+    private static void PopulateDatabase(Connection c) {
+        populateItems(c);
+        populateLocations(c);
+        populateEvents(c);
     }
 
     /**

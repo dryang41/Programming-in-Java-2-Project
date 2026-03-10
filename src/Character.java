@@ -18,7 +18,8 @@ public class Character{
     private int hunger = maximumValue;
     private int warmth = maximumValue;
 
-    private final int startingSlots = 2;
+    // How much slots the player starts with until they find the backpack
+    private final int startingSlots = 3;
 
     private static final Character instance = new Character();
 

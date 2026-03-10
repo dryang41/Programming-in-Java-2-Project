@@ -77,7 +77,7 @@ public class Inventory{
     public boolean removeItem(int index) throws ArrayIndexOutOfBoundsException{
         boolean itemRemoved = false;
         // Decrementing parameter index to make it zero-based
-        index--;
+        //index--;
 
         for (int i = 0; i < itemsStored.size(); i++) {
             if (index == i) {

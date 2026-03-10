@@ -14,8 +14,8 @@ public class Game {
     // In-game trackers to keep track of game progress.
     private final static int endPoint = 30;
     private static int timeTracker = 0;
-    // Is the game still in the beginning state?
-    private static boolean beginningSection = true;
+    // Checks if player revisits cabin to give backpack to expand inventory
+    private static boolean cabinRevisited = false;
 
     // Logger object
     final static Logger log = LogManager.getLogger("test");
@@ -94,6 +94,11 @@ public class Game {
                     case "watch":
                         checkWatch();
                         break;
+                    case "locations":
+                        for (Location l : allLocations) {
+                            System.out.println(l);
+                        }
+                        break;
                     default:
                         System.out.println("You can't check " + noun);
                 }
@@ -105,30 +110,35 @@ public class Game {
             case "move":
                 switch (noun) {
                     case "north":
-
                         updateLocation("north");
+                        generateAndExecuteEvent("north");
                         break;
                     case "south":
                         updateLocation("south");
-                        int min = 1;
-                        int max = 3;
-                        int randomNumber = (int)(Math.random() * (max - min + 1)) + min;
-                        Event event = database.createEvent(randomNumber);
-                        event.executeEvent();
+                        generateAndExecuteEvent("south");
                         break;
                     case "west":
                         updateLocation("west");
+                        generateAndExecuteEvent("west");
                         break;
                     case "east":
                         updateLocation("east");
+                        generateAndExecuteEvent("east");
                         break;
                     case "cabin":
                         updateLocation("cabin");
+                        if (!cabinRevisited) {
+                            inventory.addInventorySlots(6);
+                            database.createEvent(2).executeEvent();
+                            System.out.println("Your inventory has expanded to fill " + inventory.getInventorySlots() + " items.");
+                            timeTracker++;
+                        }
                         break;
                     default:
                         System.out.println(noun + " is not a valid location to move!");
                         break;
                 }
+                break;
             case "use":
                 try {
                     int index = Integer.parseInt(noun);
@@ -164,6 +174,24 @@ public class Game {
                     System.out.println("That is not a valid number!");
                 }
                 break;
+            case "collect":
+                boolean hasBottle = false;
+                if (noun.equals("water") && characterLocation.getName().equals("West")) {
+                    for (int i = 0; i < inventory.getItems().size(); i++) {
+                        if (inventory.getItems().get(i).getName().equals("Empty Bottle")) {
+                            inventory.removeItem(i);
+                            inventory.addItem(new ConsumableItem("Water Bottle", "A plastic bottle filled with drinking water, it restores a bit of thirst.", 1, "thirst", 2));
+                            hasBottle = true;
+                        }
+                    }
+                    if (!hasBottle) {
+                        System.out.println("You don't have an empty container to fill water with!");
+                    }
+                }
+                else {
+                    System.out.println("Collect " + noun + " is not a valid command!");
+                }
+                break;
             case "quit":
                 if (noun.isEmpty()) { gameOn = false; }
                 else { System.out.println("quit " + noun + " is not a valid command"); }
@@ -178,8 +206,59 @@ public class Game {
      * Method for both setting up game
      */
     private static void introSequence() {
+        // Keeping track if the sequence is still happening
+        boolean lanternGrabbed = false;
+        boolean openedDoor = false;
+
+        // Adding starting slots to inventory
         inventory.addInventorySlots(character.getStartingSlots());
+
+        // Display intro messages
         startMessage();
+
+        while (!openedDoor) {
+            while (!lanternGrabbed) {
+                try {
+                    // Find user input
+                    findVerbAndNoun();
+
+                    // If user inputs correct command.
+                    if (verb.equals("grab") && noun.equals("lantern")) {
+                        // Sets lanternGrabbed to true to not be stuck in infinite loop
+                        lanternGrabbed = true;
+                        // Event to give lantern to player
+                        Event event = database.createEvent(1);
+                        event.executeEvent();
+                    }
+                    // If user doesn't input correct command.
+                    else {
+                        System.out.println(verb + "" + noun + " is not a valid command! Type \"grab lantern\" to grab the lantern.");
+                    }
+                } catch (Exception ex) {
+                    System.err.println(ex);
+                    log.error(ex);
+                }
+            }
+            try {
+                // Find user input.
+                findVerbAndNoun();
+
+                // If user inputs correct command
+                if (verb.equals("open") && noun.equals("door")) {
+                    // Sets openedDoor to true to not be stuck in infinite loop
+                    openedDoor = true;
+                    // Display messages to player describing world.
+                    messageAfterLeaving();
+                }
+                // If user doesn't input correct command.
+                else {
+                    System.out.println(verb + "" + noun + " is not a valid command! Type \"open door\" to open the door.");
+                }
+            } catch (Exception ex) {
+                System.err.println(ex);
+                log.error(ex);
+            }
+        }
     }
 
     /**
@@ -226,13 +305,76 @@ public class Game {
             if (l.getName().toLowerCase().equals(name.toLowerCase())) {
                 // Update variable
                 characterLocation = l;
-                System.out.println("You moved " + name);
+                // If character moves to the cabin, this if-else is here to not have bad grammar, "You moved cabin" will print if there is no if-else
+                if (name.equals("cabin")) {
+                    System.out.println("You moved to the " + name + ".");
+                }
+                // Increment the time tracker, the game only progresses through moving to locations other than the cabin.
+                else {
+                    System.out.println("You moved " + name + ".");
+                    timeTracker++;
+                }
             }
         }
 
         // If characterLocation is not updated, inform player.
         if (copy.equals(characterLocation)) {
             System.out.println("You did not move anywhere!");
+        }
+    }
+
+    /**
+     * Both generates and executes an event based on the character's location.
+     * It uses random number generation to pick a random event from the database and executes event.
+     * @param location The name of the location the character is.
+     */
+    private static void generateAndExecuteEvent(String location) {
+        // Min and max variables for the random number generator
+        int minEventId;
+        int maxEventId;
+        // Random number generator that picks a number to choose an eventID from
+        int eventId;
+        // Event object variable to execute
+        Event event;
+
+        // Switch-case to find all locations except cabin
+        switch(location) {
+            //
+            case "north":
+                minEventId = 3;
+                maxEventId = 8;
+                eventId = (int)(Math.random() * (maxEventId - minEventId + 1)) + minEventId;
+
+                event = database.createEvent(eventId);
+                event.executeEvent();
+                break;
+            case "west":
+                minEventId = 9;
+                maxEventId = 14;
+                eventId = (int)(Math.random() * (maxEventId - minEventId + 1)) + minEventId;
+
+                event = database.createEvent(eventId);
+                event.executeEvent();
+                break;
+            case "south":
+                minEventId = 15;
+                maxEventId = 20;
+                eventId = (int)(Math.random() * (maxEventId - minEventId + 1)) + minEventId;
+
+                event = database.createEvent(eventId);
+                event.executeEvent();
+                break;
+            case "east":
+                minEventId = 21;
+                maxEventId = 26;
+                eventId = (int)(Math.random() * (maxEventId - minEventId + 1)) + minEventId;
+
+                event = database.createEvent(eventId);
+                event.executeEvent();
+                break;
+            default:
+                System.err.println("That is not a valid location!");
+                break;
         }
     }
 
@@ -244,9 +386,11 @@ public class Game {
         System.out.println("Check Status - shows your health, hunger, thirst, and warmth stats.");
         System.out.println("Check Inventory - shows you all of your items in your inventory.");
         System.out.println("Check Watch - you will take a look at your watch.");
+        System.out.println("Check Locations - learn about all locations on the map.");
         System.out.println("Move North, East, South, West, Cabin - you move to the corresponding direction.");
         System.out.println("Use [item slot] - uses the item and the effects are applied.");
         System.out.println("Unequip [item slot] - unequips items with no limit on times of use.");
+        System.out.println("Collect Water - if nearby water, you could collect water if you have a container.");
         System.out.println("Current Location - shows the location you are in");
         System.out.println("Quit - exits the game");
         System.out.println("Note: Commands only have to spelt right to work.");
@@ -330,27 +474,25 @@ public class Game {
         }
     }
 
+    /**
+     * Sorts and prints the inventory based on user input.
+     */
     private static void sortInventory() {
         try {
-            // While-loop condition
-            boolean promptAgain = true;
-            while (promptAgain) {
-                // Gets user-input
-                findVerbAndNoun();
-                // Save results and end loop if yes
-                if (verb.equals("name") && noun.isBlank()) {
-                    inventory.sortByName();
-                    System.out.println(inventory);
-                    promptAgain = false;
-                    // Just end loop if no
-                } else if (verb.equals("rarity") && noun.isBlank()) {
-                    inventory.sortByRarity();
-                    System.out.println(inventory);
-                    promptAgain = false;
-                    // Invalid command
-                } else {
-                    System.out.println(verb + " " + noun + "is not a valid command!");
-                }
+            findVerbAndNoun();
+            // Sort inventory by name
+            if (verb.equals("name") && noun.isBlank()) {
+                inventory.sortByName();
+                System.out.println(inventory);
+            }
+            // Sort inventory by rarity
+            else if (verb.equals("rarity") && noun.isBlank()) {
+                inventory.sortByRarity();
+                System.out.println(inventory);
+            }
+            // If user doesn't sort by name or rarity.
+            else {
+                System.out.println("Inventory not sorted.");
             }
         } catch (Exception ex) {
             System.err.println(ex);
@@ -384,8 +526,8 @@ public class Game {
     }
 
     public static void main(String[] args) {
-        startMessage();
-
+        // Play the intro sequence
+        introSequence();
         // initial exception handling structure
         try {
             while(gameOn) {
