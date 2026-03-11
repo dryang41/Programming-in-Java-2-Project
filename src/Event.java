@@ -124,6 +124,7 @@ public class Event {
 
         // If there is an item, give it to the player
         if (getItemGiven() != null) {
+            // If inventory fails to be added, it must be full
             inventory.addItem(getItemGiven());
         }
     }

@@ -76,11 +76,16 @@ public class Inventory{
      */
     public boolean removeItem(int index) throws ArrayIndexOutOfBoundsException{
         boolean itemRemoved = false;
-        // Decrementing parameter index to make it zero-based
-        //index--;
 
+        // Loop through all items and see which one matches user input
         for (int i = 0; i < itemsStored.size(); i++) {
             if (index == i) {
+                // If the item being removes is a water bottle, replace the water bottle with an empty bottle
+                if (getItems().get(i).getName().equals("Water Bottle")) {
+                    itemsStored.add(new PassiveItem("Empty Bottle", "An empty plastic bottle used for holding water, the label is ripped off.", 1, "thirst"));
+                }
+
+                // Remove item and flip return value
                 itemsStored.remove(i);
                 itemRemoved = true;
             }
@@ -95,56 +100,16 @@ public class Inventory{
     }
 
     /**
-     * Method for discarding an item. The only difference between removeItem and discardItem is the print statement.
-     * @param index The slot that is to be emptied.
-     * @return Whether the item was successfully removed.
-     * @throws ArrayIndexOutOfBoundsException
+     * Grabs an item from the List and returns a ConsumableItem if the item is a Consumable
+     * @param index The slot that is to be grabbed.
+     * @return The ConsumableItem to be used by the character.
      */
-    public boolean discardItem(int index) throws ArrayIndexOutOfBoundsException{
-        boolean itemRemoved = false;
-        // Decrementing parameter index to make it zero-based
-        index--;
-
-        for (int i = 0; i < itemsStored.size(); i++) {
-            if (index == i) {
-                System.out.println(getItems().get(i).getName() + " removed from your inventory.");
-                itemsStored.remove(i);
-                itemRemoved = true;
-            }
-        }
-
-        // Inform the player that the slot couldn't be emptied.
-        if (itemRemoved == false) {
-            System.out.println("That slot doesn't exist! Try Again.");
-        }
-
-        return itemRemoved;
-    }
-
-    /**
-     * Grabs an item from the inventory.
-     * @param index The slot where the item is grabbed.
-     * @return The item in the slot.
-     *
-    public Item getItem(int index) {
-        Item item = null;
-        // Decrementing parameter index to make it zero-based
-        index--;
-
-        for (int i = 0; i < slotsFilled; i++) {
-            if (index == i) {
-                item = getItems().get(i);
-            }
-        }
-
-        return item;
-    }*/
-
     public ConsumableItem getConsumable(int index) {
         ConsumableItem item = null;
         // Decrementing parameter index to make it zero-based
         index--;
 
+        // Loop through List and check if item is a consumable and matches index
         for (int i = 0; i < itemsStored.size(); i++) {
             if (index == i) {
                 if (getItems().get(i) instanceof ConsumableItem) {
@@ -156,11 +121,17 @@ public class Inventory{
         return item;
     }
 
+    /**
+     * Grabs an item from the List and returns a PassiveItem if the item is a Passive
+     * @param index The slot that is to be grabbed.
+     * @return The PassiveItem to be used by the character.
+     */
     public PassiveItem getPassive(int index) {
         PassiveItem item = null;
         // Decrementing parameter index to make it zero-based
         index--;
 
+        // Loop through List and check if item is a passive and matches index
         for (int i = 0; i < itemsStored.size(); i++) {
             if (index == i) {
                 if (getItems().get(i) instanceof PassiveItem) {

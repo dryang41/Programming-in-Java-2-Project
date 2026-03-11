@@ -156,32 +156,33 @@ public final class DatabaseManager {
      */
     private static void populateEvents(Connection c) {
         try (Statement statement = c.createStatement()) {
-            // All cabin events, id's 1 and 2
+            // All cabin events, id's 1, 2, and 3
             statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES ('You grab the lantern and the light fills the room. There is only a bed and a desk in the room, you see a door that leads outside. You should open the door and head outside.', 1, 'Cabin')");
             statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES ('You walk back to the place where you started, the cabin. There is something odd in the distance, there is a backpack. Was that always there? You grab the backpack and something is inside, an empty bottle.', 5, 'Cabin')");
+            statement.executeUpdate("INSERT INTO events (description, locationname) VALUES ('You make your back to the cabin. You enter the cabin and there is nothing of note that happens.', 'Cabin')");
 
-            // All north events, id's 3 through 8
+            // All north events, id's 4 through 8
             statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES('When you approach the foot of the mountain range, you come across a set of bulky clothing. You grab it and take it for yourself.', 8, 'North')");
             statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES('You head into the mountain range and after a little bit of looking around, you see a well preserved pack of meat. It still seems edible.', 10, 'North')");
             statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES('The harsh, bitter cold takes you by surprise, it is so cold that any warm clothing may not work.', 'warmth', -2, 'North')");
             statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES('As you walk across the rugged terrain, a rock rips your clothing and the opening allows the cold to hit you hard.', 'warmth', -2, 'North')");
             statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES('As the snow falls from the sky, you decide to open your mouth and consume snow. The snow melts as it hits your mouth and quite tasty.', 'thirst', 1, 'North')");
 
-            // All west events, id's 9 through 14
+            // All west events, id's 9 through 13
             statement.executeUpdate("INSERT INTO events (description, locationname) VALUES('You approach the beach and look out into the beautiful sea. You know it is best to not try and swim.', 'West')");
             statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES('You walk across the beach as you see something in the sand. It is a pack of heals, did that wash ashore?', 3, 'West')");
             statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES('There is a strange sound coming from the sea, a metal crate is somehow floating in the water. It washes ashore and is filled with food.', 9, 'West')");
             statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES('Despite knowing the rough seas will certainly overpower you, you jump in the water anyway. The currents drag you under and fill your lungs, thankfully, you make it back onto land.', 'health', -3, 'West')");
             statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES('You build a pit in the sand and fill it with water, and the Sun warms up the water. You take a dip and it is so comfortable, you wish you could stay there forever.', 'health', 1, 'West')");
 
-            // All south events, id's 15 through 20
+            // All south events, id's 14 through 18
             statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES ('As you traverse the thick jungle interior, trying not to get lost, you trip on a thick root. The fall hurts you a bit.', 'health', -1, 'South')");
             statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES ('You make your way through the jungle as you come across a small pond. The water of the pond seems to have healing properties.', 'health', 2, 'South')");
             statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES ('You smell something quite appeitzing in the distance, you make your way to it. It is a delicious tree of apples, you collect some.', 7, 'South')");
             statement.executeUpdate("INSERT INTO events (description, locationname) VALUES ('You stay on the path to not get lost. Despite your best efforts, you find nothing. At least you did not get lost', 'South')");
             statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES ('You walk through the forest and get lost. You eventually find your way out but journey makes you hungry.', 'hunger', -2, 'South')");
 
-            // All east events, id's 21 through 26
+            // All east events, id's 19 through 23
             statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES('In the barren desert, you somehow spot some vegatation, a cactus. You collect the cactus for some food just in case.', 8, 'East')");
             statement.executeUpdate("INSERT INTO events (description, itemid, locationname) VALUES('You walk across the desert, you shoes sinking into the hot sand. You walk peacefully as you trip over something, a medkit.', 4, 'East')");
             statement.executeUpdate("INSERT INTO events (description, effectoncharacter, effectiveness, locationname) VALUES ('The hot desert Sun hits your skin making you sweat a lot. The profusely sweating makes your throat dry and thirsty.', 'thirst', -2, 'East')");
@@ -289,8 +290,11 @@ public final class DatabaseManager {
     public Event createEvent(int id) {
         Event event = null;
 
+        // Try-with resources
         try (Statement statement = getConnection().createStatement()) {
+            // Prepared statement to search through events table to find event
             PreparedStatement pstatement = getConnection().prepareStatement("SELECT * FROM events WHERE eventid = ?");
+            // Update prepared statement to have parameter in query
             pstatement.setInt(1, id);
             ResultSet rs = pstatement.executeQuery();
             while (rs.next()) {

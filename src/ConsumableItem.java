@@ -26,6 +26,5 @@ public class ConsumableItem extends Item{
 
         // Decrement the amount of uses of item remaining.
         amountOfUses--;
-        // amountOfUses;
     }
 }
