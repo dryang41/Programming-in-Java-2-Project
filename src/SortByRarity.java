@@ -1,5 +1,8 @@
 import java.util.Comparator;
 
+/**
+ * Sorting class for item that sorts items by their rarity, from rarest to most common.
+ */
 public class SortByRarity implements Comparator<Item> {
 
     @Override

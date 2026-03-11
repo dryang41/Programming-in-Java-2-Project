@@ -1,4 +1,8 @@
+/**
+ * Class for places the player can go to progress the game.
+ */
 public class Location {
+    // Name and description of Location
     private String name;
     private String description;
 

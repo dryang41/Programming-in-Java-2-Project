@@ -1,3 +1,6 @@
+/**
+ * PassiveItems are items can be equipped and unequipped. They don't have limits on the amount of times they can be used.
+ */
 public class PassiveItem extends Item{
 
     public PassiveItem(String name, String description, int rarity, String effect) {

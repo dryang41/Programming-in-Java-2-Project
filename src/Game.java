@@ -5,9 +5,11 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-/*
-* Game class to run the game itself. Run this class to play the game.
-*/
+/**
+ * This overall project is a text-based survival exploration game.
+ * Game class to run the game itself. Run this class to play the game.
+ * @author Drake Yang
+ */
 public class Game {
     // Makes sure the game is still running
     private static boolean gameOn = true;
@@ -271,7 +273,12 @@ public class Game {
                     break;
                 // If verb and noun is invalid
                 default:
-                    System.out.println(verb + " " + noun + " is not a valid command!");
+                    if (verb.isBlank() || noun.isBlank()) {
+                        System.out.println("That is not a valid command!");
+                    }
+                    else {
+                        System.out.println(verb + " " + noun + " is not a valid command!");
+                    }
                     break;
             }
         // Any exceptions will be thrown as custom exception

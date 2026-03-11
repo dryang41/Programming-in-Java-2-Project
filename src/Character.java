@@ -1,5 +1,3 @@
-import java.io.Serializable;
-
 /**
  * Character class is used to track variables of player character.
  * Singleton pattern used to create a single instance of Character object in memory for all classes to use.

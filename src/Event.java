@@ -1,6 +1,16 @@
-import java.util.ArrayList;
-
+/**
+ * Events are things that will happen to the character.
+ * Everytime the player enters a move command, a random event will trigger.
+ * Every event can either, do nothing to the character and just be text, give an item, or apply an effect which takes and gives health, thirst, hunger, or warmth.
+ */
 public class Event {
+    /*
+    Description is that happens to the character in the world of the game.
+    EffectOnCharacter is what stat will be modified if there is one.
+    Effectiveness works with effectOnCharacter, telling the game how much to modify by.
+    ItemGiven is the item that will be added to the inventory for use.
+    LocationPossible is the location that the event can fire, it can't fire an any other Location besides the one listed.
+     */
     private String description;
     private String effectOnCharacter;
     private int effectiveness;

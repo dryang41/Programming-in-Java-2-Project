@@ -1,4 +1,8 @@
+/**
+ * ConsumableItems are items can be used and have a set amount of times of use before being removed from inventory.
+ */
 public class ConsumableItem extends Item{
+    // Amount of times item can be used before being removed from inventory
     private int amountOfUses;
 
     public ConsumableItem(String name, String description, int rarity, String effect, int amountOfUses){

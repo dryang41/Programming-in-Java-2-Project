@@ -1,5 +1,3 @@
-import java.io.Serializable;
-
 /**
  * Abstract item class for items. This just lays the groundwork for how items should behave and interact with the player.
  * It is abstract to not have any direct instantiation of Item class.
